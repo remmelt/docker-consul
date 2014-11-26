@@ -1,5 +1,10 @@
-FROM 		progrium/busybox
+FROM 		debian:sid
 MAINTAINER 	Jeff Lindsay <progrium@gmail.com>
+
+RUN apt-get update -qq \
+    && apt-get install -yqq curl bash unzip net-tools dnsutils \
+    && apt-get autoclean \
+    && rm -rf /var/lib/apt/lists/*
 
 ADD https://dl.bintray.com/mitchellh/consul/0.4.1_linux_amd64.zip /tmp/consul.zip
 RUN cd /bin && unzip /tmp/consul.zip && chmod +x /bin/consul && rm /tmp/consul.zip
@@ -9,8 +14,6 @@ RUN cd /tmp && unzip /tmp/webui.zip && mv dist /ui && rm /tmp/webui.zip
 
 ADD https://get.docker.io/builds/Linux/x86_64/docker-1.2.0 /bin/docker
 RUN chmod +x /bin/docker
-
-RUN opkg-install curl bash
 
 ADD ./config /config/
 ONBUILD ADD ./config /config/
