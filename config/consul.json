@@ -1,6 +1,6 @@
 {
 	"data_dir": "/data",
-	"ui_dir": "/ui",
+	"ui_dir": "/ui/dist",
 	"client_addr": "0.0.0.0",
 	"ports": {
 		"dns": 53
