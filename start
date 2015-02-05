@@ -45,6 +45,10 @@ main() {
 			cmd-run $@
 		;;
 		*)
+			recursor=$(cat /etc/resolv.conf | grep nameserver | head -1 | cut -d ' ' -f 2)
+			echo Setting recursor to "$recursor"
+			sed -i -e s/8\.8\.8\.8/$recursor/ config/consul.json
+
 			local nproc=$(grep -c ^processor /proc/cpuinfo 2>/dev/null || 1)
 			GOMAXPROCS=$nproc exec /bin/consul agent -config-dir=/config $@
 		;;
