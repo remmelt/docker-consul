@@ -7,7 +7,7 @@ main() {
 	local port="$1"; shift
 	local path="$1"; shift
 	local opts="$@"
-	
+
 	local ip="$(docker inspect -f "{{.NetworkSettings.IPAddress}}" $container_id)"
 	local curl_cmd="curl \
 		--include \
@@ -17,12 +17,13 @@ main() {
 		--retry 2 \
 		$opts \
 		http://$ip:$port$path"
-
 	local check_id="chk-$(cat /proc/sys/kernel/random/uuid)"
 
-	docker run --name $check_id --net container:$container_id --entrypoint "/bin/bash" $IMAGE -c "$curl_cmd"
-	local code=$?
+	local result=$(docker run --name $check_id --net container:$container_id --entrypoint "/bin/bash" $IMAGE -c "$curl_cmd")
 	docker rm -f $check_id >/dev/null 2>&1 || true
+
+	echo $result | egrep -C100 'HTTP/1.1 [23][0-9]{2} '
+	local code=$?
 
 	exit $code
 }
